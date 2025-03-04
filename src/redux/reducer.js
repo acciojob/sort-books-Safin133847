@@ -11,9 +11,9 @@ const booksReducer = (state = initialState, action) => {
         case FETCH_BOOKS_REQUEST:
             return { ...state, loading: true, error: null };
         case FETCH_BOOKS_SUCCESS:
-            return { ...state, books: action.payload, loading: false };
+            return { ...state, books: action.payload || [], loading: false }; // Ensure books is always an array
         case FETCH_BOOKS_FAILURE:
-            return { ...state, loading: false, error: action.payload };
+            return { ...state, books: [], loading: false, error: action.payload }; // Reset books on failure
         case SORT_BOOKS:
             const { sortBy, order } = action.payload;
             const sortedBooks = [...state.books].sort((a, b) => {
