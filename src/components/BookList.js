@@ -4,7 +4,7 @@ import { fetchBooks, sortBooks } from '../redux/actions';
 
 const BookList = () => {
     const dispatch = useDispatch();
-    const { books, loading, error } = useSelector((state) => state.books);
+    const { books = [], loading, error } = useSelector((state) => state.books || {});
     const [sortBy, setSortBy] = useState("title");
     const [order, setOrder] = useState("asc");
 
@@ -13,7 +13,7 @@ const BookList = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(sortBooks({ sortBy, order }));
+        dispatch(sortBooks(sortBy, order));
     }, [sortBy, order, dispatch]);
 
     return (
@@ -35,7 +35,8 @@ const BookList = () => {
 
             {loading && <p>Loading...</p>}
             {error && <p>Error loading books</p>}
-            {!loading && !error && Array.isArray(books) && books.length > 0 ? (
+
+            {!loading && !error && books.length > 0 ? (
                 <table>
                     <thead>
                         <tr>
@@ -46,7 +47,7 @@ const BookList = () => {
                     </thead>
                     <tbody>
                         {books.map((book) => (
-                            <tr key={book.id}>
+                            <tr key={book.primary_isbn13 || book.title}> 
                                 <td>{book.title}</td>
                                 <td>{book.author}</td>
                                 <td>{book.publisher}</td>
@@ -54,9 +55,7 @@ const BookList = () => {
                         ))}
                     </tbody>
                 </table>
-            ) : (
-                !loading && !error && <p>No books available</p>
-            )}
+            ) : (!loading && !error && <p>No books available</p>)} 
         </div>
     );
 };
